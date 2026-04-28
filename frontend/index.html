@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fullstack App</title>
+</head>
+<body>
+
+<h1>Aidana App</h1>
+
+<input id="input" placeholder="Enter text">
+<button onclick="add()">Add</button>
+
+<ul id="list"></ul>
+
+<script>
+const API = "ВСТАВИШЬ ПОТОМ BACKEND URL";
+
+async function load() {
+    const res = await fetch(API + "/api/data");
+    const data = await res.json();
+
+    const list = document.getElementById("list");
+    list.innerHTML = "";
+
+    data.forEach((item, i) => {
+        const li = document.createElement("li");
+        li.innerHTML = item.text + " <button onclick='del(" + i + ")'>X</button>";
+        list.appendChild(li);
+    });
+}
+
+async function add() {
+    const text = document.getElementById("input").value;
+
+    await fetch(API + "/api/data", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({text})
+    });
+
+    load();
+}
+
+async function del(i) {
+    await fetch(API + "/api/data/" + i, {
+        method: "DELETE"
+    });
+    load();
+}
+
+load();
+</script>
+
+</body>
+</html>

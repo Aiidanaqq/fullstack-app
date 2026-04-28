@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fullstack App</title>
 </head>
 <body>
@@ -12,35 +14,44 @@
     <ul id="list"></ul>
 
     <script>
+        // ВАЖНО: твой backend URL
         const API = "https://fullstack-app-production-a92e.up.railway.app";
 
         async function load() {
-            const res = await fetch(API + "/api/data");
-            const data = await res.json();
+            try {
+                const res = await fetch(API + "/api/data");
+                const data = await res.json();
 
-            const list = document.getElementById("list");
-            list.innerHTML = "";
+                const list = document.getElementById("list");
+                list.innerHTML = "";
 
-            data.forEach(item => {
-                const li = document.createElement("li");
-                li.innerText = item.text;
+                data.forEach(item => {
+                    const li = document.createElement("li");
+                    li.innerText = item.text + " ";
 
-                const btn = document.createElement("button");
-                btn.innerText = "Удалить";
-                btn.onclick = () => remove(item.id);
+                    const btn = document.createElement("button");
+                    btn.innerText = "Удалить";
+                    btn.onclick = () => remove(item.id);
 
-                li.appendChild(btn);
-                list.appendChild(li);
-            });
+                    li.appendChild(btn);
+                    list.appendChild(li);
+                });
+            } catch (e) {
+                console.error("Ошибка загрузки:", e);
+            }
         }
 
         async function add() {
             const text = document.getElementById("text").value;
 
+            if (!text) return;
+
             await fetch(API + "/api/data", {
                 method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({text})
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ text })
             });
 
             document.getElementById("text").value = "";

@@ -4,52 +4,58 @@
     <title>Fullstack App</title>
 </head>
 <body>
+    <h1>Список данных</h1>
 
-<h1>Aidana App</h1>
+    <input id="text" placeholder="Введите текст">
+    <button onclick="add()">Добавить</button>
 
-<input id="input" placeholder="Enter text">
-<button onclick="add()">Add</button>
+    <ul id="list"></ul>
 
-<ul id="list"></ul>
+    <script>
+        const API = "https://fullstack-app-production-a92e.up.railway.app";
 
-<script>
-const API = "ВСТАВИШЬ ПОТОМ BACKEND URL";
+        async function load() {
+            const res = await fetch(API + "/api/data");
+            const data = await res.json();
 
-async function load() {
-    const res = await fetch(API + "/api/data");
-    const data = await res.json();
+            const list = document.getElementById("list");
+            list.innerHTML = "";
 
-    const list = document.getElementById("list");
-    list.innerHTML = "";
+            data.forEach(item => {
+                const li = document.createElement("li");
+                li.innerText = item.text;
 
-    data.forEach((item, i) => {
-        const li = document.createElement("li");
-        li.innerHTML = item.text + " <button onclick='del(" + i + ")'>X</button>";
-        list.appendChild(li);
-    });
-}
+                const btn = document.createElement("button");
+                btn.innerText = "Удалить";
+                btn.onclick = () => remove(item.id);
 
-async function add() {
-    const text = document.getElementById("input").value;
+                li.appendChild(btn);
+                list.appendChild(li);
+            });
+        }
 
-    await fetch(API + "/api/data", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({text})
-    });
+        async function add() {
+            const text = document.getElementById("text").value;
 
-    load();
-}
+            await fetch(API + "/api/data", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({text})
+            });
 
-async function del(i) {
-    await fetch(API + "/api/data/" + i, {
-        method: "DELETE"
-    });
-    load();
-}
+            document.getElementById("text").value = "";
+            load();
+        }
 
-load();
-</script>
+        async function remove(id) {
+            await fetch(API + "/api/data/" + id, {
+                method: "DELETE"
+            });
 
+            load();
+        }
+
+        load();
+    </script>
 </body>
 </html>

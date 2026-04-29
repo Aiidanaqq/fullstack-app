@@ -1,10 +1,23 @@
-- name: Deploy via SSH
-  uses: appleboy/ssh-action@master
-  with:
-    host: ${{ secrets.SERVER_IP }}
-    username: root
-    key: ${{ secrets.SSH_KEY }}
-    script: |
-      cd fullstack-app
-      docker-compose down
-      docker-compose up -d --build
+name: Deploy to DigitalOcean
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: root
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd ~/fullstack-app
+            git pull origin main
+            docker-compose down
+            docker-compose up -d --build

@@ -11,6 +11,8 @@ services:
 
   backend:
     build: ./backend
+    expose:
+      - "5000"
     environment:
       DATABASE_URL: postgresql://postgres:mypassword@postgres/mydb
     depends_on:
